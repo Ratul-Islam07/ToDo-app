@@ -1,0 +1,80 @@
+{% extends 'base/main.html' %}
+
+{% block title %}📝 Task List{% endblock title %}
+
+{% block content %}
+
+    <div>
+        {% if request.user.is_authenticated %}
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <p class="fw-bold fs-5 text-muted mb-0">Current User: {{ request.user }}</p>
+                <form method="POST" action="{% url 'logout' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
+            </div>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+        {% endif %}
+        <hr>
+
+        <h1 class="mb-4">ToDo List</h1>
+
+        <!-- Display user greeting and uncompleted tasks count -->
+        <h3>Hello {{ request.user.username }},</h3>
+        <p class="mt-3">You have {{ count }} uncompleted task{% if incomplete_tasks_count != 1 %}s{% endif %}.</p>
+
+        <h3><a href="{% url 'taskcreate' %}" class="btn btn-success mb-3">Add ToDo</a></h3>
+
+        <form method="GET" class="d-flex mb-4">
+            <input type="text" name="search-area" class="form-control me-2" value="{{ search_input }}" placeholder="Search tasks...">
+            <button type="submit" class="btn btn-primary h-100">Search</button>
+        </form>
+
+        <!-- Table for tasks -->
+        <div class="table-responsive" style="max-height: 60vh; overflow-y: auto;">
+            <table class="table table-borderless table-hover">
+                <thead>
+                    <tr>
+                        <th>Tasks</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for task in tasklist %}
+                <tr>
+                    <td>
+                        <span class="rounded-circle me-2" style="width: 15px; height: 15px; display: inline-block; background-color: {% if task.complete %}#28a745{% else %}#cccccc{% endif %};"></span>
+                        <a href="{% url 'taskdetail' task.id %}" class="btn">
+                            <span class="{% if task.complete %}text-decoration-line-through{% endif %}">
+                                {{ task.title }}
+                            </span>
+                        </a>
+                    </td>
+                    <td align="right" style="white-space: nowrap;">
+                        <!-- Tick icon for marking as complete -->
+                        {% if task.complete %}
+                        <!-- If task is complete, show a cross (❌) to unmark completion -->
+                        <a href="{% url 'toggle_task_complete' task.id %}" class="btn">&#10060;</a> <!-- Cross symbol -->
+                        {% else %}
+                        <!-- If task is incomplete, show a tick (✔️) to mark completion -->
+                        <a href="{% url 'toggle_task_complete' task.id %}" class="btn">✔️</a> <!-- Tick symbol -->
+                        {% endif %}
+
+                        
+                        <!-- Edit and Delete icons -->
+                        <a href="{% url 'taskupdate' task.id %}" class="btn">✏️</a>
+                        <a href="{% url 'taskdelete' task.id %}" class="btn">🗑️</a>
+                    </td>
+                </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center">No tasks found.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock content %}

@@ -1,0 +1,37 @@
+{% extends 'base/main.html' %}
+
+{% block title %}📋 Task Details{% endblock title %}
+
+{% block content %}
+
+    <h1>Task Details</h1>
+    
+    <div class="p-4">
+        <h3 class="card-title mb-3">{{ task.title }}</h3>
+        
+        <p class="card-text"><strong>Description:</strong> {{ task.description }}</p>
+        <p class="card-text mb-4"><strong>Status:</strong>{{ task.complete|yesno:"Complete, Incomplete" }} </p>
+        
+        
+        {% comment %} <p class="card-text">Created on: <strong>{{ task.created_at|date:"F j, Y, g:i a" }}</strong></p> <!-- Assuming you have a created_at field --> {% endcomment %}
+        
+        <div class="d-flex justify-content-between mt-3">
+            <!-- Back to Task List Button -->
+            <a href="{% url 'tasklist' %}" class="btn btn-secondary d-flex align-items-center">
+                🔙 Back to Task List
+            </a>
+            
+            <!-- Edit Task Button -->
+            <a href="{% url 'taskupdate' task.id %}" class="btn btn-warning me-2 d-flex align-items-center">
+                ✏️ Edit Task
+            </a>
+        
+            <!-- Delete Task Button -->
+            <a href="{% url 'taskdelete' task.id %}" class="btn btn-danger me-2 d-flex align-items-center">
+                🗑️ Delete Task
+            </a>
+        </div>
+        
+    </div>
+
+{% endblock content %}
